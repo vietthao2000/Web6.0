@@ -41,13 +41,22 @@ var update = function(){
     if (Nakama.player.position.y-10>=0) {Nakama.player.position.y -= 10;}
   }
   if (Nakama.keyboard.isDown(Phaser.Keyboard.DOWN)) {
-    if (Nakama.player.position.y+10<=880) {Nakama.player.position.y += 10;}
+    //This works for me
+    //if (Nakama.player.position.y+10<=880) {Nakama.player.position.y += 10;}
+
+    //This is standard but does not work for me
+    if (Nakama.player.position.y+10<=960) {Nakama.player.position.y += 10;}
   }
+  
   if (Nakama.keyboard.isDown(Phaser.Keyboard.LEFT)) {
     if (Nakama.player.position.x-10>=0) {Nakama.player.position.x -= 10;}
   }
   if (Nakama.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-    if (Nakama.player.position.x+10<=560) {Nakama.player.position.x += 10;}
+    //This works for me
+    //if (Nakama.player.position.x+10<=560) {Nakama.player.position.x += 10;}
+
+    //This is standard but does not work for me
+    if (Nakama.player.position.x+10<=640) {Nakama.player.position.x += 10;}
   }
 }
 
