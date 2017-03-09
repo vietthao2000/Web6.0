@@ -37,6 +37,7 @@ var preload = function(){
 }
 
 var createBullet = function() {
+  //Load the bullet asset image
   Nakama.bullet = Nakama.game.add.weapon(100,'assets',bulletConfigs.asset[i]);
   //Kill the bullet when it goes out of the map
   Nakama.bullet.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
