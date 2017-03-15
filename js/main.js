@@ -70,7 +70,8 @@ var create = function(){
         DOWN      : Phaser.Keyboard.DOWN,
         LEFT      : Phaser.Keyboard.LEFT,
         RIGHT     : Phaser.Keyboard.RIGHT,
-        SPACEBAR  : Phaser.Keyboard.SPACEBAR
+        SPACEBAR  : Phaser.Keyboard.SPACEBAR,
+        CHANGEBULLET: Phaser.Keyboard.L,
       }
     ));
 
@@ -81,7 +82,8 @@ var create = function(){
         DOWN      : Phaser.Keyboard.S,
         LEFT      : Phaser.Keyboard.A,
         RIGHT     : Phaser.Keyboard.D,
-        SPACEBAR  : Phaser.Keyboard.F
+        SPACEBAR  : Phaser.Keyboard.F,
+        CHANGEBULLET: Phaser.Keyboard.E,
       }
     ));
 
