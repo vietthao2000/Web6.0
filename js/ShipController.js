@@ -1,16 +1,11 @@
 class ShipController {
 	constructor(x, y, spriteName, configs) {
-		this.sprite = Nakama.game.add.sprite(x, y, 'assets',spriteName);  
-		Nakama.game.physics.arcade.enable(this.sprite);
-		this.configs = configs;
-		this.bulletConfigs = {
-			asset 	: ["BulletType1.png","BulletType2.png","BulletType3.png"],
-			speed 	: [400,400,4000],
-			fireRate 	: [60,60,500],
-			x 		: [40,40,40],
-			y 		: [0,0,-400],
-		}
-		this.createBullet();
+		this.sprite = Nakama.playerGroup.create(x, y, 'assets', spriteName);
+    this.sprite.body.collideWorldBounds = true;
+    this.configs = configs;
+    this.timeSinceLastFire = 0;
+    this.bullets = [];
+    this.sprite.anchor = new Phaser.Point(0.5,0.5);
 	}
 
 	update() {
@@ -34,31 +29,35 @@ class ShipController {
 			this.sprite.body.velocity.x = 0;
 		}
 
-		if (Nakama.keyboard.isDown(this.configs.SPACEBAR)) {
-			this.bullet.fire();
-		}
-
-		if (Nakama.keyboard.isDown(this.configs.E)) {
-			createBullet();
-		}
+		if(Nakama.keyboard.isDown(this.configs.FIRE)){
+      this.tryFire();
+    }
+    this.bulletUpdate();
+    this.timeSinceLastFire += Nakama.game.time.physicsElapsed;
 	}
 
-	createBullet () {
-		//Load the bullet asset image
-		this.bullet = Nakama.game.add.weapon(100,'assets',this.bulletConfigs.asset[this.i]);
-		this.bullet.i=0;
-		//Kill the bullet when it goes out of the map
-		this.bullet.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
-		//Set firing speed
-		this.bullet.bulletSpeed = this.bulletConfigs.speed[this.bullet.i];
-		//Set firing rate, 1 bullet per x milisecs
-		this.bullet.fireRate = this.bulletConfigs.fireRate[this.bullet.i];
-		//Rotate the bullet to make it point upward
-		this.bullet.bulletAngleOffset = 90;
-		//Track the Sprite and center it by horizontal offset
-		this.bullet.trackSprite(this, this.bulletConfigs.x[this.bullet.i], this.bulletConfigs.y[this.bullet.i]);
-		this.bullet.i=(this.i+1)%3;
-	}
+	tryFire(){
+    if (this.timeSinceLastFire >= this.configs.COOLDOWN) {
+    	this.createBullet(new Phaser.Point(0, -1));
+	    /*this.createBullet(new Phaser.Point(1, -2));
+	    this.createBullet(new Phaser.Point(-1, -5));
+	    this.createBullet(new Phaser.Point(1, -4));
+	    this.createBullet(new Phaser.Point(-1, -2));*/
+      this.timeSinceLastFire = 0;
+    }
+  }
+
+  createBullet(direction) {
+  	this.bullets.push(
+	  	new HomingBulletController(this.sprite.position, direction, "BulletType2.png")
+  	);
+  }
+
+  bulletUpdate() {
+  	this.bullets.forEach(function(bullet) {
+  		bullet.update();
+  	});
+  }
 }
 
 ShipController.SHIP_SPEED=400;

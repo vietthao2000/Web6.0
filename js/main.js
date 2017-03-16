@@ -60,7 +60,11 @@ var preload = function(){
 var create = function(){
   Nakama.game.physics.startSystem(Phaser.Physics.ARCADE);
   Nakama.keyboard = Nakama.game.input.keyboard;
-  Nakama.game.add.sprite(0,0,'background')
+  Nakama.game.add.sprite(0,0,'background');
+  Nakama.playerBulletGroup = Nakama.game.add.physicsGroup();
+  Nakama.enemyBulletGroup = Nakama.game.add.physicsGroup();
+  Nakama.playerGroup = Nakama.game.add.physicsGroup();
+  Nakama.enemyGroup = Nakama.game.add.physicsGroup();
   Nakama.players = [];
   Nakama.enemies = [];
   Nakama.players.push(
@@ -70,7 +74,8 @@ var create = function(){
         DOWN      : Phaser.Keyboard.DOWN,
         LEFT      : Phaser.Keyboard.LEFT,
         RIGHT     : Phaser.Keyboard.RIGHT,
-        SPACEBAR  : Phaser.Keyboard.SPACEBAR
+        FIRE      : Phaser.Keyboard.SPACEBAR,
+        COOLDOWN  : 0.1
       }
     ));
 
@@ -81,24 +86,29 @@ var create = function(){
         DOWN      : Phaser.Keyboard.S,
         LEFT      : Phaser.Keyboard.A,
         RIGHT     : Phaser.Keyboard.D,
-        SPACEBAR  : Phaser.Keyboard.F
+        FIRE      : Phaser.Keyboard.F,
+        COOLDOWN  : 0.1
       }
     ));
 
   Nakama.enemies.push(
     new EnemyController(Nakama.configs.ENEMY1.x,Nakama.configs.ENEMY1.y,"EnemyType1.png",
       {
-        initialSpeed  : Nakama.configs.ENEMY1.initialSpeed,
-        left          : Nakama.configs.ENEMY1.relativeLeft,
-        right         : Nakama.configs.GAME_WIDTH+Nakama.configs.ENEMY1.relativeRight
+        INITIALSPEED  : Nakama.configs.ENEMY1.initialSpeed,
+        LEFT          : Nakama.configs.ENEMY1.relativeLeft,
+        RIGHT         : Nakama.configs.GAME_WIDTH+Nakama.configs.ENEMY1.relativeRight,
+        HEALTH        : 15,
+        COOLDOWN: 1
       }));
 
   Nakama.enemies.push(
     new EnemyController(Nakama.configs.ENEMY2.x,Nakama.configs.ENEMY2.y,"EnemyType2.png",
       {
-        initialSpeed  : Nakama.configs.ENEMY2.initialSpeed,
-        left          : Nakama.configs.ENEMY2.relativeLeft,
-        right         : Nakama.configs.GAME_WIDTH+Nakama.configs.ENEMY2.relativeRight
+        INITIALSPEED  : Nakama.configs.ENEMY2.initialSpeed,
+        LEFT          : Nakama.configs.ENEMY2.relativeLeft,
+        RIGHT         : Nakama.configs.GAME_WIDTH+Nakama.configs.ENEMY2.relativeRight,
+        HEALTH        : 15,
+        COOLDOWN      : 1
       }));
 }
 
@@ -107,9 +117,16 @@ var update = function() {
     ship.update();
   });
 
-  Nakama.enemies.forEach(function(ship) {
-    ship.update();
+  Nakama.enemies.forEach(function(enemy) {
+    enemy.update();
   });
+
+  Nakama.game.physics.arcade.overlap(Nakama.playerBulletGroup,Nakama.enemyGroup, onEnemyHit);
+}
+
+var onEnemyHit = function(bulletSprite, enemySprite) {
+    enemySprite.damage(1);
+    bulletSprite.kill();
 }
 
 // before camera render (mostly for debug)
